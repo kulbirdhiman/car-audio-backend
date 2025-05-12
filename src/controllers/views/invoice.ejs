@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <!-- Logo -->
+        <div class="flex justify-center mb-6">
+            <img src="<%= logoUrl %>" alt="Company Logo" class="w-40">
+        </div>
+
+        <h2 class="text-2xl font-bold text-center mb-6">Invoice</h2>
+
+        <!-- Billing & Shipping Section -->
+        <div class="grid grid-cols-2 gap-6 mb-6">
+            <div>
+                <p class="text-lg font-semibold">Billing Address</p>
+                <p><%= billing.name %> <%= billing.last_name %></p>
+                <p><%= billing.street_address %>, <%= billing.city %></p>
+                <p><%= billing.state_name %> - <%= billing.postcode %></p>
+                <p><%= billing.country_name %></p>
+            </div>
+            <div>
+                <p class="text-lg font-semibold">Shipping Address</p>
+                <p><%= shipping.name %> <%= shipping.last_name %></p>
+                <p><%= shipping.street_address %>, <%= shipping.city %></p>
+                <p><%= shipping.state_name %> - <%= shipping.postcode %></p>
+                <p><%= shipping.country_name %></p>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <p class="text-lg font-semibold">Products</p>
+            <table class="w-full border-collapse border border-gray-200 mt-2">
+                <thead>
+                    <tr class="bg-black text-white">
+                        <th class="p-3 text-left">Product Name</th>
+                        <th class="p-3 text-left">Options</th>
+                        <th class="p-3 text-left">Quantity</th>
+                        <th class="p-3 text-left">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.forEach(product => { %>
+                        <tr class="border-b border-gray-200">
+                            <td class="p-3"><%= product.name %></td>
+                            <td class="p-3">
+                                <% if (product.variations && product.variations.length > 0) { %>
+                                    <%= product.variations.flatMap(variation => variation.options.map(option => option.name)).join(", ") %>
+                                <% } else { %>
+                                    N/A
+                                <% } %>
+                            </td>
+                            <td class="p-3"><%= product.quantity %></td>
+                            <td class="p-3">$<%= product.price.toFixed(2) %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Price Summary -->
+        <div class="text-lg">
+            <p>Subtotal: <span class="font-semibold">$<%= sub_total.toFixed(2) %></span></p>
+            <% if (gst && gst > 0) { %>
+                <p>GST: <span class="font-semibold">$<%= gst.toFixed(2) %></span></p>
+            <% } %>
+            <% if (total_discount && total_discount > 0) { %>
+                <p>Discount: <span class="font-semibold">$<%= total_discount.toFixed(2) %></span></p>
+            <% } %>
+            <p>Shipping Charge: <span class="font-semibold">$<%= shipping_charge.toFixed(2) %></span></p>
+            <p class="text-xl font-bold text-black">Total Paid: $<%= total_paid_value.toFixed(2) %></p>
+        </div>
+    </div>
+</body>
+
+</html>

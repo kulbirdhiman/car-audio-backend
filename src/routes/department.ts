@@ -60,7 +60,7 @@ router.put(
  
   updateDepartmentOrder
 );
-router.get("/departments/car-products", listCarProductDepartments);
+router.get("/car-products", listCarProductDepartments);
 
 
 export default router;

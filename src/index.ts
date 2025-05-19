@@ -1,7 +1,8 @@
 import express from "express";
-import * as dotenv from "dotenv-safe";
+// import * as dotenv from "dotenv-safe";
+import dotenv from "dotenv"
 import cors, { CorsOptions } from "cors";
-dotenv.config({ allowEmptyValues: true });
+dotenv.config();
 
 import "./database";
 
@@ -12,7 +13,7 @@ const app = express();
 const allowedDomain = process.env.ALLOWED_DOMAIL || ""; // Provide a default empty string
 
 const corsOptions: CorsOptions = {
-  origin: [allowedDomain,"https://www.kayhanaudio.com.au","http://localhost:3000","http://localhost:3001"],  // Allow all origins; replace with specific origins if needed
+  origin: [allowedDomain,"https://www.kayhanaudio.com.au","http://localhost:3000","http://localhost:3001","https://car-audio-expert.onrender.com"],  // Allow all origins; replace with specific origins if needed
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
 };
@@ -26,7 +27,7 @@ import authRoutes from "./routes/auth";
 import departmentRoute from "./routes/department";
 import categoryRoute from "./routes/category"
 import carModelsRoute from "./routes/carModel"
-// import uploadRoutes from "./routes/upload"
+import uploadRoutes from "./routes/upload"
 import productRoute from "./routes/product"
 import addOnRoute from "./routes/addOn"
 import variationRoute from "./routes/variation"
@@ -48,8 +49,6 @@ import wpOrdersRoute from "./routes/wpOrders";
 import redirectUrlRoute from "./routes/redirectUrl"
 // import stripeOrder from "./routes/stripeOrder"
 import zipPayRoute from "./routes/zipPay"
-import wholeSaleRequestRoute from "./routes/wholesaleRequest"
-import wholesaleCartRoute from "./routes/wholesaleCart"
 import saleTargetRoute from "./routes/saleTarget"
 import achievedValueRoute from "./routes/achievedValue"
 
@@ -59,7 +58,7 @@ app.use("/v1/auth", authRoutes);
 app.use("/v1/department", departmentRoute);
 app.use("/v1/category", categoryRoute);
 app.use("/v1/car_model", carModelsRoute);
-// app.use("/v1/upload", uploadRoutes); 
+app.use("/v1/upload", uploadRoutes); 
 app.use("/v1/product", productRoute); 
 app.use("/v1/add_on", addOnRoute); 
 app.use("/v1/variation", variationRoute); 
@@ -81,8 +80,6 @@ app.use("/v1/wp_orders", wpOrdersRoute);
 app.use("/v1/redirect_url", redirectUrlRoute);
 // app.use("/v1/stripe_order", stripeOrder);
 app.use("/v1/zip_pay", zipPayRoute);
-app.use("/v1/wholesale_request", wholeSaleRequestRoute);
-app.use("/v1/wholesale_cart", wholesaleCartRoute);
 app.use("/v1/sale_target", saleTargetRoute);
 app.use("/v1/achived_value", achievedValueRoute);
  

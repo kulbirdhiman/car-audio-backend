@@ -14,6 +14,7 @@ class Department extends Model {
   public created_at!: Date;
   public updated_at!: Date;
   public deleted_at?: Date;
+  is_car_product!: boolean;
 }
 
 Department.init(

@@ -3,31 +3,36 @@ import { SUCCESS_RESPONSE, SERVER_ERROR_RESPONSE } from "../helper/apiResponse";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 
-import s3 from "../config/aws";
+import s34 from "../config/aws";
 
 export const uploadFile = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    if (!req.file) {
-      res.status(400).json({ message: "No file uploaded." });
+    const files = req.files as Express.MulterS3.File[]; // adjust based on your multer type
+    if (!files || files.length === 0) {
+      res.status(400).json({ message: "No files uploaded." });
       return;
     }
 
-    const fileUrl = (req.file as any).location; // S3 returns the file URL in `location`
-
-    SUCCESS_RESPONSE(res, "File uploaded successfully.", {
-      url: fileUrl,
-      data: req.file as any,
+    const uploaded = files.map((file) => ({
+      key: file.key,
+      location: file.location, // optional
+    }));
+    // console.log(uploaded)
+    res.status(200).json({
+      message: "Files uploaded successfully.",
+      data: uploaded,
     });
   } catch (error) {
     console.error(error);
-    SERVER_ERROR_RESPONSE(res);
+    res.status(500).json({ message: "Server error." });
   }
 };
 
-// const s3 = new S3Client({ region: process.env.AWS_REGION });
+
+const s3 = new S3Client({ region: process.env.AWS_REGION });
 
 export const bdeleteFile = async (
   req: Request,

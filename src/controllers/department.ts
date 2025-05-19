@@ -23,7 +23,8 @@ export const createDepartment = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { name, title, description, is_view,seo_keywords } = req.body;
+    const { name, title, description, is_view, seo_keywords, is_car_product } =
+      req.body;
     const { id } = req.user!;
     const slug = generateSlug(name);
 
@@ -40,9 +41,10 @@ export const createDepartment = async (
       created_by: id,
       description,
       is_view,
-      seo_keywords
+      seo_keywords,
+      is_car_product,
     });
-
+    // console.log(department)
     const msg = recordCreatedMsg("department");
     SUCCESS_RESPONSE(res, msg);
     return;
@@ -86,10 +88,9 @@ export const upsertDepartment = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { name, title, description, is_view, slug,seo_keywords } = req.body;
+    const { name, title, description, is_view, slug, seo_keywords ,is_car_product } = req.body;
     const { id } = req.user!;
     const { department_id } = req.params;
-
     const existingDepartment = await Department.findOne({
       where: { slug, id: { [Op.ne]: department_id } },
     });
@@ -100,7 +101,7 @@ export const upsertDepartment = async (
     }
 
     const updated = await Department.update(
-      { name, title, description, is_view, slug, edit_by: id,seo_keywords },
+      { name, title, description, is_view, slug, edit_by: id, seo_keywords ,is_car_product },
       { where: { id: department_id } }
     );
     const msg = recordUpdatedMsg("Department");
@@ -140,8 +141,8 @@ export const updateDepartmentOrder = async (
 ): Promise<void> => {
   try {
     const { id } = req.user!;
-    const { departments } = req.body; 
-
+    const { departments } = req.body;
+    // console.log(departments)
     if (!Array.isArray(departments) || departments.length === 0) {
       SERVER_ERROR_RESPONSE(res, "Invalid department list.");
       return;

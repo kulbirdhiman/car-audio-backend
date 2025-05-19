@@ -7,7 +7,7 @@ import { deleteFiles, uploadFile } from "../controllers/upload";
 const router = express.Router();
 
 // POST /v1/upload
-router.post("/", upload.single("file"), uploadFile);
+router.post("/", upload.array("file"), uploadFile);
 
 router.post("/delete",authenticateUser, deleteFiles);
 

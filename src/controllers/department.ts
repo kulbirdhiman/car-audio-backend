@@ -44,7 +44,7 @@ export const createDepartment = async (
       seo_keywords,
       is_car_product,
     });
-    console.log(department)
+    // console.log(department)
     const msg = recordCreatedMsg("department");
     SUCCESS_RESPONSE(res, msg);
     return;
@@ -142,7 +142,7 @@ export const updateDepartmentOrder = async (
   try {
     const { id } = req.user!;
     const { departments } = req.body;
-    console.log(departments)
+    // console.log(departments)
     if (!Array.isArray(departments) || departments.length === 0) {
       SERVER_ERROR_RESPONSE(res, "Invalid department list.");
       return;

@@ -13,7 +13,7 @@ const app = express();
 const allowedDomain = process.env.ALLOWED_DOMAIL || ""; // Provide a default empty string
 
 const corsOptions: CorsOptions = {
-  origin: [allowedDomain,"https://www.kayhanaudio.com.au","http://localhost:3000","http://localhost:3001","https://car-audio-expert.onrender.com"],  // Allow all origins; replace with specific origins if needed
+  origin: [allowedDomain,"https://www.kayhanaudio.com.au","http://localhost:3000","http://localhost:3001","https://car-audio-expert.onrender.com","http://10.220.134.57:10000","https://car-one-sable.vercel.app"],  // Allow all origins; replace with specific origins if needed
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
 };

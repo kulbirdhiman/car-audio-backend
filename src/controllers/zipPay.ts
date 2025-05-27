@@ -7,7 +7,7 @@ import Order from "../models/Order";
 import User from "../models/User";
 
 // "https://api.afterpay.com"
-const ZIP_PAY_URL = process.env.ZIP_PAY_URL; // or sandbox URL
+const ZIP_PAY_URL = process.env.ZIP_PAY_URL; 
 
 const ZIP_PAY_API_KEY = process.env.ZIP_PAY_API_KEY;
 

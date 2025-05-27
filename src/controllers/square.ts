@@ -5,7 +5,7 @@ import { confirmPayment, placeOrder } from "./checkOut";
 import Cart from "../models/Cart";
 
 const SQUARE_ACCESS_TOKEN = process.env.SQUARE_ACCESS_TOKEN; // Replace with your Square API access token
-// const SQUARE_API_URL = "https://connect.squareupsandbox.com/v2";
+
 const SQUARE_API_URL = "https://connect.squareup.com/v2";
 
 

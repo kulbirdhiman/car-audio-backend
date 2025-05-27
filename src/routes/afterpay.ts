@@ -1,35 +1,35 @@
-import express from "express";
+// import express from "express";
 
  
-import {   capturePaymentOfWholeSale, capturePaymentV, createPayment, createPaymentForWholesale } from "../controllers/afterpay";
+// // import {   capturePaymentOfWholeSale, capturePaymentV, createPayment, createPaymentForWholesale } from "../controllers/afterpay";
  
-const router = express.Router();
+// const router = express.Router();
 
-// v1/category
+// // v1/category
 
-//add
-router.post(
-  "/create-order",
+// //add
+// router.post(
+//   "/create-order",
 
-  createPayment
-);
-router.post(
-  "/capture-payment",
+//   createPayment
+// );
+// router.post(
+//   "/capture-payment",
 
-  capturePaymentV
-);
+//   capturePaymentV
+// );
 
-router.post(
-  "/create-wholesale-order",
+// router.post(
+//   "/create-wholesale-order",
 
-  createPaymentForWholesale
-);
-router.post(
-  "/capture-wholesale-payment",
+//   createPaymentForWholesale
+// );
+// router.post(
+//   "/capture-wholesale-payment",
 
-  capturePaymentOfWholeSale
-);
+//   capturePaymentOfWholeSale
+// );
 
 
  
-export default router;
+// export default router;

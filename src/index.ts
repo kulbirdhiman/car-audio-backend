@@ -13,7 +13,7 @@ const app = express();
 const allowedDomain = process.env.ALLOWED_DOMAIL || ""; // Provide a default empty string
 
 const corsOptions: CorsOptions = {
-  origin: [allowedDomain,"https://www.kayhanaudio.com.au","http://localhost:3000","http://localhost:3001","https://car-audio-expert.onrender.com","http://89.116.134.75:3001","http://89.116.134.75:3000", "http://110.173.134.121:3002"],  // Allow all origins; replace with specific origins if needed
+  origin: [allowedDomain,"https://www.kayhanaudio.com.au","http://localhost:3000","http://localhost:3001","https://car-audio-expert.onrender.com","http://89.116.134.75:3001","http://89.116.134.75:3000","https://api.caraudioexpert.com.au"],  // Allow all origins; replace with specific origins if needed
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   credentials : true
@@ -44,14 +44,14 @@ import canNotFindRoute from "./routes/canNotFind"
 import siteMapRoute from "./routes/siteMap"
 import wishListRoute from "./routes/wishList"
 import seoMetaRoute from "./routes/seoMetaData"
-import afterPayRoute from "./routes/afterpay"
+// import afterPayRoute from "./routes/afterpay"
 import adminDashboard from "./routes/adminDashboard"
 import wpOrdersRoute from "./routes/wpOrders";
 import redirectUrlRoute from "./routes/redirectUrl"
 // import stripeOrder from "./routes/stripeOrder"
 import zipPayRoute from "./routes/zipPay"
-import saleTargetRoute from "./routes/saleTarget"
-import achievedValueRoute from "./routes/achievedValue"
+// import saleTargetRoute from "./routes/saleTarget"
+// import achievedValueRoute from "./routes/achievedValue"
 
 
 app.use("/v1/users", userRoutes);
@@ -75,14 +75,14 @@ app.use("/v1/can_not_find", canNotFindRoute);
 app.use("/v1/site_map", siteMapRoute); 
 app.use("/v1/wish_list", wishListRoute); 
 app.use("/v1/seo_meta", seoMetaRoute); 
-app.use("/v1/after_pay", afterPayRoute); 
+// app.use("/v1/after_pay", afterPayRoute); 
 app.use("/v1/admin_dashboard", adminDashboard); 
 app.use("/v1/wp_orders", wpOrdersRoute);
 app.use("/v1/redirect_url", redirectUrlRoute);
 // app.use("/v1/stripe_order", stripeOrder);
 app.use("/v1/zip_pay", zipPayRoute);
-app.use("/v1/sale_target", saleTargetRoute);
-app.use("/v1/achived_value", achievedValueRoute);
+// app.use("/v1/sale_target", saleTargetRoute);
+// app.use("/v1/achived_value", achievedValueRoute);
  
 
 

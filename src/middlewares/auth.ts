@@ -50,7 +50,7 @@ export const authorizeRoles = (...allowedRoles: number[]) => {
 };
 
 
-const ALLOWED_DOMAINS = ["http://89.116.134.75:3000", "http://localhost:3000"]; // Add more if needed
+const ALLOWED_DOMAINS = [ "http://localhost:3000"]; // Add more if needed
 
 export const checkDomain = (req: Request, res: Response, next: NextFunction): void => {
   const origin = req.header("Origin");

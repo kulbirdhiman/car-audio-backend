@@ -24,7 +24,7 @@ const upload = multer({
       cb: (error: Error | null, key?: any) => void
     ) => {
       console.log(file.originalname);
-      const folderFromReq = (_req.body.folder || _req.query.folder || "uploads").toString(); // default to 'uploads'
+      const folderFromReq = (_req.body.folder || _req.query.folder || "car_audio_expert_uploads").toString(); // default to 'uploads'
       const safeFolder = folderFromReq.replace(/[^a-zA-Z0-9-_]/g, ""); // sanitize folder name
 
       const safeFileName = path.basename(file.originalname).replace(/\s+/g, "-"); // Replace spaces with hyphens

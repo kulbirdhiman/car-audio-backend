@@ -3,11 +3,16 @@ import { randomUUID } from "crypto";
 import axios from "axios";
 import { confirmPayment, placeOrder } from "./checkOut";
 import Cart from "../models/Cart";
+import dotenv from "dotenv";
 
-const SQUARE_ACCESS_TOKEN = process.env.SQUARE_ACCESS_TOKEN; // Replace with your Square API access token
+dotenv.config();
 
-const SQUARE_API_URL = "https://connect.squareup.com/v2";
+const SQUARE_ACCESS_TOKEN = process.env.SQUARE_ACCESS_TOKEN;
+const isSandbox = process.env.NODE_ENV !== "production";
 
+const SQUARE_API_URL = isSandbox
+  ? "https://connect.squareupsandbox.com/v2"
+  : "https://connect.squareup.com/v2";
 
 // ✅ Step 1: Create Payment
 export const createPayment = async (req: Request, res: Response) => {
@@ -21,9 +26,10 @@ export const createPayment = async (req: Request, res: Response) => {
       productData,
       paymentMethod,
       discount,
-      selectedShipping
+      selectedShipping,
     } = req.body;
 
+    // Place order first (your business logic)
     const { order } = await placeOrder(
       shippingAddress,
       user,
@@ -43,8 +49,8 @@ export const createPayment = async (req: Request, res: Response) => {
         source_id: sourceId,
         idempotency_key: randomUUID(),
         amount_money: {
-          amount:amountInCents, // Convert to cents
-          currency: "AUD",
+          amount: amountInCents,
+          currency: "USD",
         },
         autocomplete: false,
       },
@@ -56,14 +62,15 @@ export const createPayment = async (req: Request, res: Response) => {
         },
       }
     );
-
+    console.log("this is response",response)
     res.json({
       success: true,
       paymentId: response.data.payment.id,
       order: order,
     });
   } catch (error: any) {
-    console.error(error);
+    console.log("asss")
+    console.error("Create Payment Error:", error.response?.data || error.message);
     res.status(500).json({ error: error.response?.data || error.message });
   }
 };
@@ -73,12 +80,11 @@ export const capturePayment = async (req: Request, res: Response) => {
   try {
     const { paymentId, order, user } = req.body;
 
-    if(user){
+    if (user) {
       await Cart.destroy({ where: { user_id: user?.id } })
-      .then(() => console.log("Cart deleted successfully"))
-      .catch((err) => console.error("Error deleting cart:", err));
+        .then(() => console.log("Cart deleted successfully"))
+        .catch((err) => console.error("Error deleting cart:", err));
     }
- 
 
     const response = await axios.post(
       `${SQUARE_API_URL}/payments/${paymentId}/complete`,
@@ -87,18 +93,16 @@ export const capturePayment = async (req: Request, res: Response) => {
         headers: {
           Authorization: `Bearer ${SQUARE_ACCESS_TOKEN}`,
           "Content-Type": "application/json",
+          "Square-Version": "2025-02-20",
         },
       }
     );
 
-    const paymentDetail = { paymentId };
-    await confirmPayment(paymentDetail, order);
+    await confirmPayment({ paymentId }, order);
 
     res.json({ success: true, data: response.data });
   } catch (error: any) {
-    console.log("ppoop");
-    
-    console.error(error.response?.data || error.message);
+    console.error("Capture Payment Error:", error.response?.data || error.message);
     res.status(500).json({ error: error.response?.data || error.message });
   }
 };

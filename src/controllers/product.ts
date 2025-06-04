@@ -503,7 +503,7 @@ export const productDetailForShop = async (
     const result = await Product.findOne({
       where: { slug: slug },
     });
-    console.log(result , "this is texting")
+    // console.log(result , "this is texting")
     const category_id = (result as any).category_id;
     const department_id = (result as any).department_id;
     const product_id = (result as any).id;

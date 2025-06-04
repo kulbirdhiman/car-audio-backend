@@ -36,7 +36,7 @@ import BillingAddress from "../models/BillingAddress";
 import Order from "../models/Order";
 import Coupon from "../models/Coupon";
 import ProductModel from "../models/Product";
-import { generateInvoice } from "./test";
+// import { generateInvoice } from "./test";
 interface Product {
   weight: number;
   height: number;
@@ -307,7 +307,7 @@ export const placeOrder = async (
     total_discount: discountValue,
     coupon_code_discount: couponDiscount,
     selected_shipment: selectedShipping,
-    device_detail: deviceDetails,
+    device_detail: deviceDetails || {},
     created_at:ausTime,
     updated_at:ausTime
   });
@@ -327,7 +327,7 @@ export const confirmPayment = async (
     );
    
     
-    await generateInvoice(order);
+    // await generateInvoice(order);
   } catch (error) {
     console.log("error", error);
   }

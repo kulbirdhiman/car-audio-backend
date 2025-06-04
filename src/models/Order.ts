@@ -1,7 +1,7 @@
 import { DataTypes, Model, Association } from "sequelize";
 import sequelize from "../config/database";
 import { DateTime } from "luxon"; // Add this line
-
+// import sequelize  from "sequelize";
 class Order extends Model {
   public id!: number;
   public order_id!: number;
@@ -15,8 +15,9 @@ Order.init(
   {
     id: {
       type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true, // Only `id` should be auto-incremented in the database
+   autoIncrement: true,
+      primaryKey: true,
+ 
     },
     // order_id: {
     //   type: DataTypes.INTEGER,
@@ -41,7 +42,10 @@ Order.init(
         return value ? JSON.parse(value) : {}; // Return an empty object if null
       },
       set(value: Record<string, any> | null) {
-        this.setDataValue("device_detail", value ? JSON.stringify(value) : null);
+        this.setDataValue(
+          "device_detail",
+          value ? JSON.stringify(value) : null
+        );
       },
     },
     user_detail: {
@@ -156,22 +160,22 @@ Order.init(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    selected_shipment : {
+    selected_shipment: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
 
-    tracking_number : {
-      type : DataTypes.STRING,
-      allowNull : true
+    tracking_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-    labe_url : {
-      type : DataTypes.STRING,
-      allowNull : true
+    labe_url: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-    invoice :{
-      type : DataTypes.STRING,
-      allowNull : true
+    invoice: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
 
     edit_by: {
@@ -198,13 +202,11 @@ Order.init(
       type: DataTypes.DATE,
       // defaultValue: DataTypes.NOW,
       // defaultValue: () => DateTime.now().setZone("Australia/Sydney").toISO(),
-
-
     },
     updated_at: {
       type: DataTypes.DATE,
       // defaultValue: DataTypes.NOW,
-            // defaultValue: () => DateTime.now().setZone("Australia/Sydney").toISO(),
+      // defaultValue: () => DateTime.now().setZone("Australia/Sydney").toISO(),
     },
     deleted_at: {
       type: DataTypes.DATE,

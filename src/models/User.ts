@@ -16,10 +16,12 @@ class User extends Model {
 
 User.init(
   {
-    id: {
+     id: {
       type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+ 
+      autoIncrement: true, // auto-increment id on new records
+      primaryKey: true, // primary key of the table
+   
     },
     name: {
       type: DataTypes.STRING,

@@ -1,5 +1,4 @@
 import sequelize from "../config/database";
-import Product from "../models/Product";
 
 console.log("Loaded models:", Object.keys(sequelize.models));
 

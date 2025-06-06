@@ -15,7 +15,7 @@ import { AuthenticatedRequest } from "../interfaces/auth";
 import { ORDER_STATUS, PAYMENT_STATUS, SALE_TARGET_TYPE, STATUS } from "../helper/constant";
 import { RECORD_GET_MSG } from "../helper/successMessages";
 import RedirectUrl from "../models/RedirectUrl";
-import SaleTarget from "../models/SaleTarget";
+// import SaleTarget from "../models/SaleTarget";
 import AchievedValue from "../models/AchievedValue";
 import Order from "../models/Order";
  

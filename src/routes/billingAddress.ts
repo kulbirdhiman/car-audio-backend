@@ -19,7 +19,7 @@ const router = express.Router();
 router.post(
   "/add",
   authenticateUser,
-  authorizeRoles(ROLES.customer,ROLES.wholesaler),
+  authorizeRoles(ROLES.customer,),
   [
     body("name").notEmpty().withMessage(" First  name is required"),
     body("last_name").notEmpty().withMessage(" Last  name is required"),
@@ -43,14 +43,14 @@ router.post(
 router.get(
   "/list",
   authenticateUser,
-  authorizeRoles(ROLES.customer,ROLES.wholesaler),
+  authorizeRoles(ROLES.customer),
   listAddress
 );
 
 router.put(
   "/delete/:address_id",
   authenticateUser,
-  authorizeRoles(ROLES.customer,ROLES.wholesaler),
+  authorizeRoles(ROLES.customer,),
   deleteAddress
 );
 
@@ -60,7 +60,7 @@ router.put(
 router.post(
   "/edit/:address_id",
   authenticateUser,
-  authorizeRoles(ROLES.customer,ROLES.wholesaler),
+  authorizeRoles(ROLES.customer),
   [
     body("name").notEmpty().withMessage(" First  name is required"),
     body("last_name").notEmpty().withMessage(" Last  name is required"),
@@ -78,7 +78,7 @@ router.post(
     body("postcode").notEmpty().withMessage("Post code is required"),
   ],
   validateRequest,
-  authorizeRoles(ROLES.customer,ROLES.wholesaler),
+  authorizeRoles(ROLES.customer),
   editAddress
 );
 

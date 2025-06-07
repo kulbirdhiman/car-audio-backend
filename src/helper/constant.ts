@@ -11,7 +11,7 @@ export const STATUS = {
 export const ROLES = {
   admin : 1,
   customer : 2,
-  wholesaler : 3
+  // wholesaler : 3
 }
 
 export const DEPARTMENT_VIEW = {

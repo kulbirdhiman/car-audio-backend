@@ -2,7 +2,7 @@ import express from "express";
 import { getUsers, createUser } from "../controllers/users";
 import { body } from "express-validator";
 import validateRequest from "../middlewares/validateRequest";
-import { changePassword, myProfile, sendOtp, setPassword, signIn, signInWholesale, signUp, verifyOtp } from "../controllers/auth";
+import { changePassword, myProfile, sendOtp, setPassword, signIn,  signUp, verifyOtp } from "../controllers/auth";
 import { authenticateUser } from "../middlewares/auth";
 
 const router = express.Router();
@@ -99,17 +99,17 @@ router.post(
   changePassword
 );
 
-router.post(
-  "/wholesale_sign_in",
-  [
-    body("email").isEmail().withMessage("Invalid email format"),
-    body("password")
-      .isLength({ min: 6 })
-      .withMessage("Password must be at least 6 characters long"),
-  ],
-  validateRequest,
-  signInWholesale
-);
+// router.post(
+//   "/wholesale_sign_in",
+//   [
+//     body("email").isEmail().withMessage("Invalid email format"),
+//     body("password")
+//       .isLength({ min: 6 })
+//       .withMessage("Password must be at least 6 characters long"),
+//   ],
+//   validateRequest,
+//   signInWholesale
+// );
 
 
 export default router;

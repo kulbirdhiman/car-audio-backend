@@ -314,56 +314,56 @@ function generateOTP(): number {
 
 
 
-export const signInWholesale = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    var errorsArray = [];
-    const user = await User.findOne({
-      where: { email, status: STATUS.active,
-        role: {
-          [Op.in]: [ ROLES.wholesaler],
-        },
-       },
-    });
+// export const signInWholesale = async (req: Request, res: Response) => {
+//   try {
+//     const { email, password } = req.body;
+//     var errorsArray = [];
+//     const user = await User.findOne({
+//       where: { email, status: STATUS.active,
+//         role: {
+//           [Op.in]: [ ROLES.wholesaler],
+//         },
+//        },
+//     });
 
-    if (!user) {
-      errorsArray.push({
-        path: "email",
-        message: UNREGISTER_EMAIL,
-      });
-      BAD_REQUEST(res, UNREGISTER_EMAIL, [{}]);
-      return;
-    }
+//     if (!user) {
+//       errorsArray.push({
+//         path: "email",
+//         message: UNREGISTER_EMAIL,
+//       });
+//       BAD_REQUEST(res, UNREGISTER_EMAIL, [{}]);
+//       return;
+//     }
 
-    const isMatch = await bcrypt.compare(password, user?.password as string);
+//     const isMatch = await bcrypt.compare(password, user?.password as string);
 
-    if (!isMatch) {
-      UNAUTHORIZED_RESPONSE(res, INCORRECT_PASSWORD);
-      return;
-    }
+//     if (!isMatch) {
+//       UNAUTHORIZED_RESPONSE(res, INCORRECT_PASSWORD);
+//       return;
+//     }
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "24h" }
-    );
+//     const token = jwt.sign(
+//       {
+//         id: user.id,
+//         email: user.email,
+//         role: user.role,
+//       },
+//       process.env.JWT_SECRET as string,
+//       { expiresIn: "24h" }
+//     );
 
-    SUCCESS_RESPONSE(res, LOG_IN_MESSAGE, {
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
-    });
-    return;
-  } catch (error) {
-    console.log(error);
+//     SUCCESS_RESPONSE(res, LOG_IN_MESSAGE, {
+//       token,
+//       user: {
+//         id: user.id,
+//         email: user.email,
+//         role: user.role,
+//       },
+//     });
+//     return;
+//   } catch (error) {
+//     console.log(error);
 
-    res.status(500).json({ error: "Failed to fetch users" });
-  }
-};
+//     res.status(500).json({ error: "Failed to fetch users" });
+//   }
+// };

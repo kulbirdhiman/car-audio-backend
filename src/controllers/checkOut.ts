@@ -48,15 +48,15 @@ export const calculateShipping = async (
   shippingAddress: any,
   products: any[]
 ): Promise<number> => {
-  if (shippingAddress.country.iso2 != "AU") {
-    const totalWeight = products.reduce(
+  if (shippingAddress?.country?.iso2 != "AU") {
+    const totalWeight = products?.reduce(
       (total, product) =>
         total + (typeof product.weight === "number" ? product.weight : 4),
       0
     );
 
     const queryStrings = {
-      country_code: shippingAddress.country.iso2,
+      country_code: shippingAddress?.country?.iso2,
       weight: totalWeight, // Example weight, adjust based on products
       service_code: "INT_PARCEL_STD_OWN_PACKAGING", // Example service code
     };
@@ -226,17 +226,17 @@ export const placeOrder = async (
   let totalAmount: number;
   let discountValue = 0;
   let couponDiscount = 0;
-  if (discount.coupon_code > 0) {
-    discountValue = Number(discountValue) + Number(discount.coupon_code);
-    couponDiscount = Number(discount.coupon_code);
+  if (discount?.coupon_code > 0) {
+    discountValue = Number(discountValue) + Number(discount?.coupon_code);
+    couponDiscount = Number(discount?.coupon_code);
   }
 
   if (!user_detail) {
     user = await User.findOne({
       where: {
         [Op.or]: [
-          { email: billing_address.email },
-          { phone: billing_address.phone },
+          { email: billing_address?.email },
+          { phone: billing_address?.phone },
         ],
         status: { [Op.eq]: STATUS.active },
       },
@@ -248,12 +248,12 @@ export const placeOrder = async (
 
     if (!user) {
       user = await User.create({
-        email: billing_address.email,
-        phone: billing_address.phone,
-        name: billing_address.name,
-        last_name: billing_address.last_name,
-        country: billing_address.country,
-        role: ROLES.customer,
+        email: billing_address?.email,
+        phone: billing_address?.phone,
+        name: billing_address?.name,
+        last_name: billing_address?.last_name,
+        country: billing_address?.country,
+        role: ROLES?.customer,
         password: hashedPassword,
       });
     }
@@ -268,14 +268,14 @@ export const placeOrder = async (
     if (!address) {
       address = await BillingAddress.create({
         email: billing_address.email,
-        phone: billing_address.phone,
-        name: billing_address.name,
-        country: billing_address.country,
-        city: billing_address.city,
-        state: billing_address.state,
-        postcode: billing_address.postcode,
-        street_address: billing_address.street_address,
-        last_name: billing_address.last_name,
+        phone: billing_address?.phone,
+        name: billing_address?.name,
+        country: billing_address?.country,
+        city: billing_address?.city,
+        state: billing_address?.state,
+        postcode: billing_address?.postcode,
+        street_address: billing_address?.street_address,
+        last_name: billing_address?.last_name,
         user_id: user?.id,
         // role: ROLES.customer,
         // password: hashedPassword,
@@ -573,7 +573,7 @@ export const addCoupon = async (req: Request, res: Response): Promise<void> => {
       }
 
       if (coupon.coupon_type == COUPEN_TYPE.free_shiipping) {
-        if (ship_address.country.iso2 != "AU") {
+        if (ship_address?.country.iso2 != "AU") {
           msg = "Free shipping is not applied on outside australia";
           BAD_REQUEST(res, msg);
           return;

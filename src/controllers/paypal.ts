@@ -54,6 +54,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     // Explicitly type the axios response
     const amount =  order.total_paid_value;
+    console.log(billingAddress , "this is billing adress")
     const { data } = await axios.post<PayPalOrderResponse>(
       `${PAYPAL_API}/v2/checkout/orders`,
       {
@@ -76,7 +77,7 @@ export const createOrder = async (req: Request, res: Response) => {
             admin_area_2: billingAddress.city,
             admin_area_1: billingAddress.state.state_code,
             postal_code: billingAddress.postcode,
-            country_code: billingAddress.country.iso2,
+            country_code: billingAddress?.country?.iso2,
           },
           email_address: billingAddress.email,
           phone: {

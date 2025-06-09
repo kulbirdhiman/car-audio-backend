@@ -370,145 +370,166 @@ export const calculatePrice = (row: any): number => {
   return variationPrice + price * row.quantity;
 };
 
-const couponCalculation = async (
-  code: any,
-  products: any,
-  ship_address: any
-) => {
+const couponCalculation = async (code: any, products: any[], ship_address: any) => {
   const coupon = await Coupon.findOne({
     where: {
-      code: code,
+      code,
       status: STATUS.active,
       activate: COUPEN_ACTIVATE.YES,
       [Op.or]: [
         { coupon_apply_for_all_time: COUPEN_APPLY_FOR_ALL_TIME.YES },
         {
-          from: { [Op.lte]: new Date() }, // from_date <= current date
-          to: { [Op.gte]: new Date() }, // to_date >= current date
+          from: { [Op.lte]: new Date() },
+          to: { [Op.gte]: new Date() },
         },
       ],
     },
   });
 
-  if (coupon) {
-    let exists = false;
-    if (
-      (coupon as any).category_validation == COUPEN_CATEGORY_VALIDATION.category
-    ) {
-      exists = (products as any).some((product: any) =>
-        (coupon as any).categories.includes(product.category_id)
-      );
-    }
-    if (
-      (coupon as any).category_validation == COUPEN_CATEGORY_VALIDATION.product
-    ) {
-      exists = (products as any).some((product: any) =>
-        (coupon as any).products.includes(product.product_id)
-      );
-    }
-    if (
-      (coupon as any).category_validation ==
-      COUPEN_CATEGORY_VALIDATION.department
-    ) {
-      exists = (products as any).some((product: any) =>
-        (coupon as any).department_ids.includes(product.department_id)
-      );
-    }
-    if ((coupon as any).category_validation == COUPEN_CATEGORY_VALIDATION.all) {
-      exists = true;
-    }
+  if (!coupon) {
+    return { success: false };
+  }
 
-    if (!exists) {
-      return {
-        success: false,
-      };
+  const validateCategory = (): boolean => {
+    const { category_validation, categories, products: allowedProducts, department_ids } = coupon as any;
+
+    switch (category_validation) {
+      case COUPEN_CATEGORY_VALIDATION.category:
+        return products.some(p => categories.includes(p.category_id));
+      case COUPEN_CATEGORY_VALIDATION.product:
+        return products.some(p => allowedProducts.includes(p.product_id));
+      case COUPEN_CATEGORY_VALIDATION.department:
+        return products.some(p => department_ids.includes(p.department_id));
+      case COUPEN_CATEGORY_VALIDATION.all:
+        return true;
+      default:
+        return false;
     }
+  };
 
-    if ((coupon as any).coupon_type == COUPEN_TYPE.product) {
-      const subTotal = calculateSubTotal(products);
-      console.log(subTotal, (coupon as any).minimum_price);
+  if (!validateCategory()) {
+    return { success: false };
+  }
 
-      if (subTotal >= (coupon as any).minimum_price) {
-        console.log("ppppppppppppppppppp");
-        const product = await ProductModel.findOne({
-          where: { id: (coupon as any).free_product },
-        });
-        if (product) {
-          return {
-            success: true,
-            coupon_type: COUPEN_TYPE.product,
-            product: product,
-          };
-        }
-      }
-    }
+  const couponType = (coupon as any).coupon_type;
+  const minPrice = (coupon as any).minimum_price;
 
-    if ((coupon as any).coupon_type == COUPEN_TYPE.free_shiipping) {
-      console.log(ship_address);
+  // ---------- 🎁 Free Product ----------
+  if (couponType === COUPEN_TYPE.product) {
+  const freeProductId = (coupon as any).free_product;
 
-      const subTotal = calculateSubTotal(products);
-      if (subTotal >= (coupon as any).minimum_price) {
+  // ✅ Check if free product is already in cart
+  const alreadyInCart = products.some(p => p.product_id === freeProductId);
+
+  // ✅ Apply only if free product not in cart and subtotal is valid
+  if (!alreadyInCart) {
+    const subTotal = calculateSubTotal(products);
+    if (subTotal >= minPrice) {
+      const product = await ProductModel.findOne({ where: { id: freeProductId } });
+      if (product) {
         return {
           success: true,
-          coupon_type: COUPEN_TYPE.free_shiipping,
+          coupon_type: COUPEN_TYPE.product,
+          product,
+           message: "coupon code is applied"
+          // You can use this info to add it on frontend
         };
       }
     }
+  }
+  return {
+    success: false,
+    message: "coupon code is already applied",
+  };
+}
 
-    if ((coupon as any).coupon_type == COUPEN_TYPE.discount) {
-      let subTotal, discount;
-      if (
-        (coupon as any).is_on_discounted_product ==
-        COUPEN_APPLY_ON_DISCOUNTED_PRODUCT.YES
-      ) {
-        subTotal = calculateSubTotal(products);
-      } else {
-        subTotal = calculateSubTotalWithoutDiscount(products);
-      }
-
-      if (
-        (coupon as any).price_validation ==
-        COUPEN_PRICE_VALIDATION.based_on_price
-      ) {
-        if (subTotal > (coupon as any).minimum_price) {
-          discount = (coupon as any).up_discount_value;
-        } else {
-          discount = (coupon as any).discount_value;
-        }
-      } else {
-        if (subTotal > (coupon as any).minimum_price) {
-          discount = (coupon as any).discount_value;
-          // console.log((coupon as any).discount_value);
-        } else {
-          return {
-            success: false,
-            coupon_type: COUPEN_TYPE.discount,
-          };
-        }
-      }
-
-      if ((coupon as any).discount_type == COUPEN_DISCOUNT_TYPE.value) {
-      } else {
-        console.log(subTotal,discount);
-        discount = percentage(discount, subTotal);
-      
-        
-        console.log(discount);
-        
-      }
-
+  // ---------- 🚚 Free Shipping ----------
+  if (couponType === COUPEN_TYPE.free_shiipping) {
+    const subTotal = calculateSubTotal(products);
+    if (subTotal >= minPrice) {
       return {
         success: true,
-        coupon_type: COUPEN_TYPE.discount,
-        discount: discount,
+        coupon_type: COUPEN_TYPE.free_shiipping,
       };
     }
-  } else {
+    return { success: false };
+  }
+
+  // ---------- 💸 Discount ----------
+ if (couponType === COUPEN_TYPE.discount) {
+  const {
+    products: allowedProducts,
+    is_on_discounted_product,
+    price_validation,
+    up_discount_value,
+    discount_value,
+    discount_type,
+    category_validation,
+    categories,
+    department_ids,
+  } = coupon as any;
+
+  // ✅ Filter eligible products based on category_validation
+  let eligibleProducts: any[] = [];
+
+  switch (category_validation) {
+    case COUPEN_CATEGORY_VALIDATION.product:
+      eligibleProducts = products.filter(p => allowedProducts.includes(p.product_id));
+      break;
+
+    case COUPEN_CATEGORY_VALIDATION.category:
+      eligibleProducts = products.filter(p => categories.includes(p.category_id));
+      break;
+
+    case COUPEN_CATEGORY_VALIDATION.department:
+      eligibleProducts = products.filter(p => department_ids.includes(p.department_id));
+      break;
+
+    case COUPEN_CATEGORY_VALIDATION.all:
+      eligibleProducts = products;
+      break;
+
+    default:
+      eligibleProducts = [];
+  }
+
+  if (!eligibleProducts.length) {
     return {
       success: false,
+      message: "Coupon not applicable to selected products.",
     };
   }
+
+  const subTotal = is_on_discounted_product === COUPEN_APPLY_ON_DISCOUNTED_PRODUCT.YES
+    ? calculateSubTotal(eligibleProducts)
+    : calculateSubTotalWithoutDiscount(eligibleProducts);
+
+  let discount;
+  if (price_validation === COUPEN_PRICE_VALIDATION.based_on_price) {
+    discount = subTotal > minPrice ? up_discount_value : discount_value;
+  } else {
+    if (subTotal <= minPrice) {
+      return { success: false };
+    }
+    discount = discount_value;
+  }
+
+  if (discount_type === COUPEN_DISCOUNT_TYPE.parcentage) {
+    discount = percentage(discount, subTotal);
+  }
+
+  return {
+    success: true,
+    coupon_type: COUPEN_TYPE.discount,
+    discount,
+    applied_on: eligibleProducts.map(p => p.product_id),
+  };
+}
+
+
+  return { success: false };
 };
+
 
 const percentage = (value: number, total: number) => (value /100 ) * total;
 
@@ -547,17 +568,17 @@ export const calculatePriceWithoutDiscount = (row: any): number => {
 export const addCoupon = async (req: Request, res: Response): Promise<void> => {
   try {
     const { code, gift_code, products, ship_address } = req.body;
-
+    
     let result;
     if (code) {
       const coupon = await couponCalculation(code, products, ship_address);
-
+      console.log(  "this is coupon code ",coupon)
       let msg;
       console.log(coupon);
       if (coupon?.success) {
-        msg = "Coupon applied successfully";
+        msg = coupon.message ||  "coupon code is already applied";
       } else {
-        msg = "Your coupon code is not correct";
+        msg = coupon.message;
         BAD_REQUEST(res, msg);
         return;
       }

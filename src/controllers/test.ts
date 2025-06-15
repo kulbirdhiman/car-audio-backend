@@ -15,7 +15,8 @@ export const generateInvoice = async (data: any): Promise<string | undefined> =>
   try {
     // Load EJS template
  
-
+          
+   
     const templatePath = path.join(__dirname, "..", "..", "views", "invoice.ejs");
     const template = fs.readFileSync(templatePath, "utf8");
 

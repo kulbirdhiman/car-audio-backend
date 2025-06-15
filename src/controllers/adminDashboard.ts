@@ -266,3 +266,4 @@ const getGroupingInterval = (startDate: Date, endDate: Date) => {
   return { fn: "DATE_FORMAT", format: "%Y-%m-%d" }; // Group by day
   // Default: Group by date
 };
+                                       

@@ -10,5 +10,5 @@ const s3 = new S3Client({
     secretAccessKey: process.env.AWSZ_SECRET_ACCESS_KEY!,
   },
 });
-
+     
 export default s3;

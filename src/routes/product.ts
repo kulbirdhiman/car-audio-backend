@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import validateRequest from "../middlewares/validateRequest";
 import { authenticateUser } from "../middlewares/auth";
 import {
+  AllProductSlug,
   createProduct,
   deleteProduct,
   editProduct,
@@ -107,5 +108,9 @@ router.put(
 
 //detail
 router.get("/list/shop/:slug", validateRequest, productDetailForShop);
+
+
+router.route("/product-slug").get(AllProductSlug)
+
 
 export default router;

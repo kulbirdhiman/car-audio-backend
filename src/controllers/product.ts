@@ -596,3 +596,33 @@ const synonyms: { [key: string]: string[] } = {
 //     .trim()
 //     .replace(/[^a-z0-9 ]/g, ""); // Remove special characters
 // }
+
+
+
+export const AllProductSlug = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const allProducts = await Product.findAll({
+      attributes: ['slug'], // Only fetch the slug field
+      // where: {
+      //   slug: { $ne: null } // Optional: Exclude products with null slugs
+      // }
+    });
+
+    const slugs = allProducts.map((product) => product.slug);
+
+    res.status(200).json({
+      success: true,
+      slugs,
+    });
+  } catch (error) {
+    console.error('Error fetching product slugs:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch product slugs',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};

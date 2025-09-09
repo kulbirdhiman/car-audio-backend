@@ -78,6 +78,7 @@ app.use("/v1/wp_orders", wpOrdersRoute);
 app.use("/v1/redirect_url", redirectUrlRoute);
 // app.use("/v1/sale_target", saleTargetRoute);
 // app.use("/v1/achived_value", achievedValueRoute);
+app.use("/v1/redirect_url", redirectUrlRoute);
  
 //payment routes
 app.use("/v1/zip_pay", zipPayRoute);

@@ -626,3 +626,86 @@ export const AllProductSlug = async (
     });
   }
 };
+
+
+
+const BASE_IMG_URL = "https://d198m4c88a0fux.cloudfront.net/";
+
+export const listAllProductsFast = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { search } = req.query;
+
+    const where: any = { status: STATUS.active };
+
+    if (search) {
+      where[Op.or] = [
+        { name: { [Op.like]: `%${search}%` } },
+        { sku_number: { [Op.like]: `%${search}%` } },
+      ];
+    }
+
+    // 🚀 Fast query — no includes, only needed columns
+    const products = await Product.findAll({
+      where,
+      attributes: [
+        "id",
+        "sku",
+        "name",
+        "description",
+        "images",
+        "regular_price",
+        "wholesale_price",
+        // "stock",
+        "weight",
+        "height",
+        "width"
+      ],
+      raw: true, // returns plain objects, no Sequelize instances
+    });
+
+    // 🧠 Optimized image parsing (fast + safe)
+    const formatted = products.map((prod) => {
+      let images = [];
+
+      if (prod.images) {
+        try {
+          if (Array.isArray(prod.images)) {
+            images = prod.images;
+          } else if (typeof prod.images === "string") {
+            images = JSON.parse(prod.images);
+          }
+        } catch {
+          images = [];
+        }
+      }
+
+      const updatedImages = images.map((imgObj:any) => ({
+        image
+            : `${BASE_IMG_URL}${imgObj.image || imgObj}`,
+      }));
+
+      return {
+        id: prod.id,
+        sku_number: prod.sku,
+        name: prod.name,
+        description: prod.description,
+        retail_price: prod.regular_price,
+        stock:  0,
+        images: updatedImages,
+         weight : prod.weight,
+        height :prod.height,
+        width:prod.weight
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "All products fetched successfully (fast mode)",
+      total: formatted.length,
+      data: formatted,
+    });
+  } catch (error) {
+    console.error("❌ Fast Product List Error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

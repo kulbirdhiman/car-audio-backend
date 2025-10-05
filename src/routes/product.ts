@@ -7,6 +7,7 @@ import {
   createProduct,
   deleteProduct,
   editProduct,
+  listAllProductsFast,
   listProduct,
   listProductForShop,
   productDetail,
@@ -112,5 +113,6 @@ router.get("/list/shop/:slug", validateRequest, productDetailForShop);
 
 router.route("/product-slug").get(AllProductSlug)
 
+router.get("/fast-list", listAllProductsFast);
 
 export default router;
